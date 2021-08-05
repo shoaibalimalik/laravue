@@ -4,8 +4,13 @@
       <h2>Students</h2>
       <div class="panel panel-primary">
         <div class="panel-heading">
-            Students
-            <router-link to="/add" class="btn btn-info pull-right" style="margin-top:-7px;margin-left:2px;">Add Student</router-link>
+          Students
+          <router-link
+            to="/add"
+            class="btn btn-info pull-right"
+            style="margin-top: -7px; margin-left: 2px"
+            >Add Student</router-link
+          >
         </div>
         <div class="panel-body">
           <table class="table">
@@ -58,18 +63,16 @@ export default {
     };
   },
   created() {
-    this.axios.get("http://localhost:8000/api/students").then((response) => {
+    this.axios.get("/api/students").then((response) => {
       this.students = response.data;
     });
   },
   methods: {
     deleteStudent(id) {
-      this.axios
-        .delete(`http://localhost:8000/api/students/${id}`)
-        .then((response) => {
-          let i = this.students.map((data) => data.id).indexOf(id);
-          this.students.splice(i, 1);
-        });
+      this.axios.delete(`/api/students/${id}`).then((response) => {
+        let i = this.students.map((data) => data.id).indexOf(id);
+        this.students.splice(i, 1);
+      });
     },
   },
 };

@@ -2031,6 +2031,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2040,7 +2045,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.axios.get("http://localhost:8000/api/students").then(function (response) {
+    this.axios.get("/api/students").then(function (response) {
       _this.students = response.data;
     });
   },
@@ -2048,7 +2053,7 @@ __webpack_require__.r(__webpack_exports__);
     deleteStudent: function deleteStudent(id) {
       var _this2 = this;
 
-      this.axios["delete"]("http://localhost:8000/api/students/".concat(id)).then(function (response) {
+      this.axios["delete"]("/api/students/".concat(id)).then(function (response) {
         var i = _this2.students.map(function (data) {
           return data.id;
         }).indexOf(id);
@@ -2073,6 +2078,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _StudentDetail_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StudentDetail.vue */ "./resources/js/components/StudentDetail.vue");
+//
+//
+//
 //
 //
 //
@@ -2184,6 +2192,10 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    handleEnterPressedEvent: function handleEnterPressedEvent(e) {
+      alert("enter key is pressed");
+      e.preventDefault();
+    },
     updateCounter: function updateCounter(e) {
       e.preventDefault();
       this.counter++;
@@ -2265,7 +2277,7 @@ __webpack_require__.r(__webpack_exports__);
     login: function login() {
       var _this = this;
 
-      axios.post('api/login', this.formData).then(function (response) {
+      axios.post('/api/login', this.formData).then(function (response) {
         localStorage.setItem('token', response.data);
 
         _this.$router.push('/');
@@ -2360,35 +2372,102 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var _components_App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/App.vue */ "./resources/js/components/App.vue");
-/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-axios */ "./node_modules/vue-axios/dist/vue-axios.es5.js");
-/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./axios */ "./resources/js/axios.js");
+/* harmony import */ var _components_App_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/App.vue */ "./resources/js/components/App.vue");
+/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-axios */ "./node_modules/vue-axios/dist/vue-axios.es5.js");
+/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_axios__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
- // import App from '..p/components/App.vue';
 
 
 
 
 
+vue__WEBPACK_IMPORTED_MODULE_4__.default.prototype.$http = _axios__WEBPACK_IMPORTED_MODULE_0__.default;
 vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_5__.default);
-vue__WEBPACK_IMPORTED_MODULE_4__.default.use((vue_axios__WEBPACK_IMPORTED_MODULE_1___default()), (axios__WEBPACK_IMPORTED_MODULE_2___default()));
+vue__WEBPACK_IMPORTED_MODULE_4__.default.use((vue_axios__WEBPACK_IMPORTED_MODULE_2___default()), _axios__WEBPACK_IMPORTED_MODULE_0__.default);
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_5__.default({
   mode: 'history',
   routes: _routes__WEBPACK_IMPORTED_MODULE_3__.routes
+});
+
+function loggedIn() {
+  return localStorage.getItem('token') === null ? false : true;
+}
+
+router.beforeEach(function (to, from, next) {
+  if (to.matched.some(function (record) {
+    return record.meta.requiresAuth;
+  })) {
+    if (!loggedIn()) {
+      next({
+        path: '/login',
+        query: {
+          redirect: to.fullPath
+        }
+      });
+    } else {
+      next();
+    }
+  } else if (to.matched.some(function (record) {
+    return record.meta.guest;
+  })) {
+    if (loggedIn()) {
+      next({
+        path: '/',
+        query: {
+          redirect: to.fullPath
+        }
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 var app = new vue__WEBPACK_IMPORTED_MODULE_4__.default({
   el: '#app',
   router: router,
   render: function render(h) {
-    return h(_components_App_vue__WEBPACK_IMPORTED_MODULE_0__.default);
+    return h(_components_App_vue__WEBPACK_IMPORTED_MODULE_1__.default);
   }
 });
+
+/***/ }),
+
+/***/ "./resources/js/axios.js":
+/*!*******************************!*\
+  !*** ./resources/js/axios.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+var http = axios__WEBPACK_IMPORTED_MODULE_0___default().create({
+  baseurl: "http://localhost:8000"
+});
+http.interceptors.request.use(function (config) {
+  var token = localStorage.getItem("token");
+
+  if (token) {
+    config.headers.common["Authorization"] = "Bearer ".concat(token);
+  }
+
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (http);
 
 /***/ }),
 
@@ -2406,9 +2485,7 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
  */
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-window.axios.defaults.withCredentials = true; // let authValues = JSON.parse(localStorage.getItem("token"));
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; // let authValues = JSON.parse(localStorage.getItem("token"));
 // let token = authValues ? `${authValues.tokenType} ${authValues.accessToken}` : null;
 // let Api = axios.create({
 //   baseURL: "http://localhost:8000/api",
@@ -20706,7 +20783,7 @@ var render = function() {
           "div",
           { staticClass: "panel-heading" },
           [
-            _vm._v("\n          Students\n          "),
+            _vm._v("\n        Students\n        "),
             _c(
               "router-link",
               {
@@ -21054,7 +21131,25 @@ var render = function() {
                   _vm._v(
                     "Button has been clicked " + _vm._s(_vm.counter) + " times"
                   )
-                ])
+                ]),
+                _vm._v(" "),
+                _c("br"),
+                _c("br"),
+                _vm._v(" "),
+                _c("input", {
+                  on: {
+                    keydown: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      $event.preventDefault()
+                      return _vm.handleEnterPressedEvent($event)
+                    }
+                  }
+                })
               ]
             )
           ]

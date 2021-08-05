@@ -57,6 +57,9 @@
 
             <!-- <student-detail @hide="hideElement" :student="student" v-if="showDetails"></student-detail> -->
 
+            <br><br>
+            <input @keydown.enter.prevent="handleEnterPressedEvent($event)" />
+
           </form>
         </div>
       </div>
@@ -81,8 +84,8 @@ export default {
       counter:0,
       items:[
           {id: 1 , message: 'First Message'},
-          {id: 2 ,message: 'Second Message'},
-          {id: 3 ,message: 'Third Message'},
+          {id: 2 , message: 'Second Message'},
+          {id: 3 , message: 'Third Message'},
       ]
     };
   },
@@ -105,6 +108,10 @@ export default {
   },
   methods: {
 
+    handleEnterPressedEvent(e){
+        alert("enter key is pressed");
+        e.preventDefault();
+    },
     updateCounter(e){
         e.preventDefault();
         this.counter++;

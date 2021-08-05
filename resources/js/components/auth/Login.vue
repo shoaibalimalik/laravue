@@ -46,7 +46,7 @@
         },
         methods: {
             login(){
-                axios.post('api/login', this.formData).then((response) => {
+                axios.post('/api/login', this.formData).then((response) => {
                     localStorage.setItem('token', response.data)
                     this.$router.push('/')
                 }).catch((errors) => {
